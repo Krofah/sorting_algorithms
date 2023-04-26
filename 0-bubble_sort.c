@@ -6,7 +6,7 @@
   * @array: The array of integers to sort
   * @size: The size of the array of integers
   *
-  * Return: Nothing!
+  * Description: Krofah Project
   */
 
 void bubble_sort(int *array, size_t size)
@@ -33,3 +33,4 @@ void bubble_sort(int *array, size_t size)
 		len--;
 	}
 }
+
