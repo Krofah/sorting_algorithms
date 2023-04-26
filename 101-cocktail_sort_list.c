@@ -55,53 +55,45 @@ void swap_node_behind(listint_t **list, listint_t **tail, listint_t **shaker)
 	tmp->prev = *shaker;
 	*shaker = tmp;
 }
+
 /**
- * cocktail_sort_list - function that sorts a doubly linked
- * list of integers in ascending order using the Cocktail
- * shaker sort algorithm
- * @list: doubly linked list of integers
- * Description: Krofah
+ * cocktail_sort_list - Sort a listint_t doubly-linked list of integers in
+ *                      ascending order using the cocktail shaker algorithm.
+ * @list: A pointer to the head of a listint_t doubly-linked list.
  */
 void cocktail_sort_list(listint_t **list)
 {
-	listint_t *front_runner, *back_runner;
-	int swapped = 1;
+	listint_t *tail, *shaker;
+	bool shaken_not_stirred = false;
 
-	if (list == NULL || *list == NULL)
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
-	front_runner = (*list);
-	back_runner = NULL;
-	while (swapped == 1)
+
+	for (tail = *list; tail->next != NULL;)
+		tail = tail->next;
+
+	while (shaken_not_stirred == false)
 	{
-		/*Here we are going forward*/
-		swapped = 0;
-		/*19, 48, 99, 71, 13, 52, 96, 73, 86, 7*/
-		while (front_runner->next && front_runner != back_runner)
+		shaken_not_stirred = true;
+		for (shaker = *list; shaker != tail; shaker = shaker->next)
 		{
-			/*99 es mayor que 71 ?*/
-			if (front_runner->n > front_runner->next->n)
+			if (shaker->n > shaker->next->n)
 			{
-				swapped = 1;/*mandamos el 99, el 71 y la cabeza 19*/
-				swap(front_runner, front_runner->next, list);
+				swap_node_ahead(list, &tail, &shaker);
+				print_list((const listint_t *)*list);
+				shaken_not_stirred = false;
 			}
-			else
-				front_runner = front_runner->next;
 		}
-		back_runner = front_runner;
-		if (swapped == 0)
-			break;
-		/*Here we are going backward*/
-		swapped = 0;
-		while (front_runner->prev && front_runner != *list)
+		for (shaker = shaker->prev; shaker != *list;
+				shaker = shaker->prev)
 		{
-			if (front_runner->n < front_runner->prev->n)
+			if (shaker->n < shaker->prev->n)
 			{
-				swapped = 1;
-				swap(front_runner->prev, front_runner, list);
+				swap_node_behind(list, &tail, &shaker);
+				print_list((const listint_t *)*list);
+				shaken_not_stirred = false;
 			}
-			else
-				front_runner = front_runner->prev;
 		}
-		*list = front_runner;
 	}
 }
+
