@@ -1,4 +1,4 @@
-include "sort.h"
+#include "sort.h"
 
 void swap_ints(int *a, int *b);
 void max_heapify(int *array, size_t size, size_t base, size_t root);
@@ -17,6 +17,7 @@ void swap_ints(int *a, int *b)
 	*a = *b;
 	*b = tmp;
 }
+
 /**
  * max_heapify - Turn a binary tree into a complete binary heap.
  * @array: An array of integers representing a binary tree.
@@ -71,4 +72,3 @@ void heap_sort(int *array, size_t size)
 		max_heapify(array, size, i, 0);
 	}
 }
-
