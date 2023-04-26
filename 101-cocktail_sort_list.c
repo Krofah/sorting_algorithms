@@ -1,75 +1,107 @@
 #include "sort.h"
 
-/**
- * swap - function that swaps nodes in a linked
- * list of integers
- * @current_node: current position to swap
- * @next_node: next position to be swapped
- * @list: doubly linked list of integers
- * Return: void
- */
-void swap(listint_t *current_node, listint_t *next_node, listint_t **list)
-{
-	/*mandamos el 99, mandamos el 71 y mandamos la cabeza 19*/
-	/*el next del 99 apunta al 13*/
-	current_node->next = next_node->next;
-	/*el 13 existe ?*/
-	if (current_node->next)
-		/*el 13 prev apunta al 99*/
-		current_node->next->prev = current_node;
-	/*el 71 next apunta al 99*/
-	next_node->next = current_node;
-	/*el 71 prev apunta al 48*/
-	next_node->prev = current_node->prev;
-	/*el 48 existe ?*/
-	if (next_node->prev)
-		/*el 48 next apunta al 71*/
-		next_node->prev->next = next_node;
-	else
-		*list = next_node;
-	/*el 99 prev apunta al 71*/
-	current_node->prev = next_node;
+void swap_node_ahead(listint_t **list, listint_t **tail, listint_t **shaker);
+void swap_node_behind(listint_t **list, listint_t **tail, listint_t **shaker);
+void cocktail_sort_list(listint_t **list);
 
-	print_list(*list);
+/**
+ * swap_node_ahead - Swap a node in a listint_t doubly-linked list
+ *                   list of integers with the node ahead of it.
+ * @list: A pointer to the head of a doubly-linked list of integers.
+ * @tail: A pointer to the tail of the doubly-linked list.
+ * @shaker: A pointer to the current swapping node of the cocktail shaker algo.
+ */
+void swap_node_ahead(listint_t **list, listint_t **tail, listint_t **shaker)
+{
+	listint_t *tmp = (*shaker)->next;
+
+	if ((*shaker)->prev != NULL)
+		(*shaker)->prev->next = tmp;
+	else
+		*list = tmp;
+	tmp->prev = (*shaker)->prev;
+	(*shaker)->next = tmp->next;
+	if (tmp->next != NULL)
+		tmp->next->prev = *shaker;
+	else
+		*tail = *shaker;
+	(*shaker)->prev = tmp;
+	tmp->next = *shaker;
+	*shaker = tmp;
 }
 
 /**
- * cocktail_sort_list - Sort a listint_t doubly-linked list of integers in
- *                      ascending order using the cocktail shaker algorithm.
- * @list: A pointer to the head of a listint_t doubly-linked list.
+ * swap_node_behind - Swap a node in a listint_t doubly-linked
+ *                    list of integers with the node behind it.
+ * @list: A pointer to the head of a doubly-linked list of integers.
+ * @tail: A pointer to the tail of the doubly-linked list.
+ * @shaker: A pointer to the current swapping node of the cocktail shaker algo.
+ */
+void swap_node_behind(listint_t **list, listint_t **tail, listint_t **shaker)
+{
+	listint_t *tmp = (*shaker)->prev;
+
+	if ((*shaker)->next != NULL)
+		(*shaker)->next->prev = tmp;
+	else
+		*tail = tmp;
+	tmp->next = (*shaker)->next;
+	(*shaker)->prev = tmp->prev;
+	if (tmp->prev != NULL)
+		tmp->prev->next = *shaker;
+	else
+		*list = *shaker;
+	(*shaker)->next = tmp;
+	tmp->prev = *shaker;
+	*shaker = tmp;
+}
+/**
+ * cocktail_sort_list - function that sorts a doubly linked
+ * list of integers in ascending order using the Cocktail
+ * shaker sort algorithm
+ * @list: doubly linked list of integers
+ * Description: Krofah
  */
 void cocktail_sort_list(listint_t **list)
 {
-	listint_t *tail, *shaker;
-	bool shaken_not_stirred = false;
+	listint_t *front_runner, *back_runner;
+	int swapped = 1;
 
-	if (list == NULL || *list == NULL || (*list)->next == NULL)
+	if (list == NULL || *list == NULL)
 		return;
-
-	for (tail = *list; tail->next != NULL;)
-		tail = tail->next;
-
-	while (shaken_not_stirred == false)
+	front_runner = (*list);
+	back_runner = NULL;
+	while (swapped == 1)
 	{
-		shaken_not_stirred = true;
-		for (shaker = *list; shaker != tail; shaker = shaker->next)
+		/*Here we are going forward*/
+		swapped = 0;
+		/*19, 48, 99, 71, 13, 52, 96, 73, 86, 7*/
+		while (front_runner->next && front_runner != back_runner)
 		{
-			if (shaker->n > shaker->next->n)
+			/*99 es mayor que 71 ?*/
+			if (front_runner->n > front_runner->next->n)
 			{
-				swap_node_ahead(list, &tail, &shaker);
-				print_list((const listint_t *)*list);
-				shaken_not_stirred = false;
+				swapped = 1;/*mandamos el 99, el 71 y la cabeza 19*/
+				swap(front_runner, front_runner->next, list);
 			}
+			else
+				front_runner = front_runner->next;
 		}
-		for (shaker = shaker->prev; shaker != *list;
-				shaker = shaker->prev)
+		back_runner = front_runner;
+		if (swapped == 0)
+			break;
+		/*Here we are going backward*/
+		swapped = 0;
+		while (front_runner->prev && front_runner != *list)
 		{
-			if (shaker->n < shaker->prev->n)
+			if (front_runner->n < front_runner->prev->n)
 			{
-				swap_node_behind(list, &tail, &shaker);
-				print_list((const listint_t *)*list);
-				shaken_not_stirred = false;
+				swapped = 1;
+				swap(front_runner->prev, front_runner, list);
 			}
+			else
+				front_runner = front_runner->prev;
 		}
+		*list = front_runner;
 	}
 }
