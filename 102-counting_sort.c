@@ -1,39 +1,23 @@
 #include "sort.h"
 
 /**
- * _bigest -  Give me the largest number in a array of integers
- * @a: The Int array
- * @size: Size of array
- * Return: The maximum integer in the array
+ * get_max - Get the maximum value in an array of integers.
+ * @array: An array of integers.
+ * @size: The size of the array.
+ *
+ * Return: The maximum integer in the array.
  */
-int _bigest(int *a, size_t size)
+int get_max(int *array, int size)
 {
-	size_t i;
-	int k = 0;
+	int max, i;
 
-	for (i = 0; i < size; i++)
+	for (max = array[0], i = 1; i < size; i++)
 	{
-		if (k < a[i])
-			k = a[i];
+		if (array[i] > max)
+			max = array[i];
 	}
-	return (k);
-}
-/**
- * _memset -  Create a integer array and set each space in 0
- * @size: Size of array
- * Return: The integer array
- */
-int *_memset(int size)
-{
-	int *ptr = NULL;
-	int i;
 
-	ptr = malloc((size) * sizeof(int));
-
-	for (i = 0; i < size; i++)
-		ptr[i] = 0;
-
-	return (ptr);
+	return (max);
 }
 
 /**
